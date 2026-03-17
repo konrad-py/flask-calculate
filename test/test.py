@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-n = 10
+lista = [('mleko', 'litr'), ('kawa', '1kg')]
 
-a = "+".join([str(x) for x in range(n+1)]) + " = "
-print(a)
+lista.pop(1)
+print(lista)

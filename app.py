@@ -5,28 +5,72 @@ from flask import Flask, render_template, request, redirect, url_for
 app = Flask(__name__)
 produkt = []
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == "GET":
+        
+        tabela = f'''<tr>
+    <th>Produkt</th>
+    <th>Ilość</th>
+    <th>Usuń</th>
+    <th>Edytuj</th>
+  </tr>'''
+        for index, (produkty, ilosc) in enumerate(produkt):
+            tabela += f'''<tr>
+            <td>{produkty}</td>
+            <td>{ilosc}</td>
+            <td><a href="{url_for('usun', id=index)}">Usuń</a></td>
+            <td><a href="{url_for('edytuj', id=index)}">Edytuj</a></td
+        </tr>'''
+        
         body = f'''
-<form id="zakupy", action="{url_for('index')}", method="POST">
+        <link rel="stylesheet" href="{url_for("static", filename="style.css")}">
+<form id="zakupy" action="{url_for('index')}" method="POST">
     <h1>Lista zakupów</h1><br>
     <label for="produkt">Produkt</label>
-    <input type="text", id="produkt", name="produkt"><br>
+    <input type="text" id="produkt" name="produkt" value='test'><br>
     <label for="ilosc">Ilość</label>
-    <input type="text", id="ilosc", name="ilosc">
-    <input type="submit", value="send">
-    <h2>{produkt}
+    <input type="text" id="ilosc" name="ilosc" value='test'>
+    <input type="submit" value="send">
+    <table>
+    {tabela}</table>
 
 '''
         return body
     
     else:
         produkt.append((request.form["produkt"], request.form["ilosc"]))
+        
 
         return redirect(url_for('index'))
 
+@app.route("/usun/<int:id>")
+def usun(id):
+    produkt.pop(id)
+    return redirect(url_for('index'))
 
+@app.route("/edytuj/<int:id>", methods=['GET', 'POST'])
+def edytuj(id):
+    if request.method == "GET":
+        body = f'''
+<form id="zakupy" action="{url_for('edytuj', id=id)}" method='POST'>
+<h1>Lista zakupów</h1><br>
+    <label for="produkt">Produkt</label>
+    <input type="text" id="produkt" name="produkt" value='{produkt[id][0]}'><br>
+    <label for="ilosc">Ilość</label>
+    <input type="text" id="ilosc" name="ilosc" value='{produkt[id][1]}'>
+    <input type="submit" value="send">
+    <table></table></form>
+    '''
+    
+        return body
+    
+    else:
+        produkt[id] = (request.form["produkt"], request.form["ilosc"])
+        return redirect(url_for('index'))
+
+    
 
 @app.route('/about')
 def about():
