@@ -49,7 +49,7 @@ def index():
 def usun(id):
     produkt.pop(id)
     return redirect(url_for('index'))
-
+"""
 @app.route("/edytuj/<int:id>", methods=['GET', 'POST'])
 def edytuj(id):
     if request.method == "GET":
@@ -69,7 +69,7 @@ def edytuj(id):
     else:
         produkt[id] = (request.form["produkt"], request.form["ilosc"])
         return redirect(url_for('index'))
-
+"""
     
 
 @app.route('/about')
