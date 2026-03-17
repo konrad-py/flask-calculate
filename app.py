@@ -63,27 +63,7 @@ def index():
 def usun(id):
     produkt.pop(id)
     return redirect(url_for('index'))
-"""
-@app.route("/edytuj/<int:id>", methods=['GET', 'POST'])
-def edytuj(id):
-    if request.method == "GET":
-        body = f'''
-<form id="zakupy" action="{url_for('edytuj', id=id)}" method='POST'>
-<h1>Lista zakupów</h1><br>
-    <label for="produkt">Produkt</label>
-    <input type="text" id="produkt" name="produkt" value='{produkt[id][0]}'><br>
-    <label for="ilosc">Ilość</label>
-    <input type="text" id="ilosc" name="ilosc" value='{produkt[id][1]}'>
-    <input type="submit" value="send">
-    <table></table></form>
-    '''
-    
-        return body
-    
-    else:
-        produkt[id] = (request.form["produkt"], request.form["ilosc"])
-        return redirect(url_for('index'))
-"""
+
     
 
 @app.route('/about')
