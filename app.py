@@ -8,8 +8,19 @@ produkt = []
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    edit_id = request.args.get('edit')
     if request.method == "GET":
+
         
+        if edit_id is not None:
+            produkt_value = produkt[int(edit_id)][0]
+            ilosc_value = produkt[int(edit_id)][1]
+            form_action = url_for('index', edit=edit_id)
+        else:
+            produkt_value = ''
+            ilosc_value = ''
+            form_action = url_for('index')
+
         tabela = f'''<tr>
     <th>Produkt</th>
     <th>Ilość</th>
@@ -21,18 +32,18 @@ def index():
             <td>{produkty}</td>
             <td>{ilosc}</td>
             <td><a href="{url_for('usun', id=index)}">Usuń</a></td>
-            <td><a href="{url_for('edytuj', id=index)}">Edytuj</a></td
+            <td><a href="{url_for('index', edit=index)}">Edytuj</a></td>
         </tr>'''
         
         body = f'''
         <link rel="stylesheet" href="{url_for("static", filename="style.css")}">
-<form id="zakupy" action="{url_for('index')}" method="POST">
+<form id="zakupy" action="{form_action}" method="POST">
     <h1>Lista zakupów</h1><br>
     <label for="produkt">Produkt</label>
-    <input type="text" id="produkt" name="produkt" value='test'><br>
+    <input type="text" id="produkt" name="produkt" value='{produkt_value}'><br>
     <label for="ilosc">Ilość</label>
-    <input type="text" id="ilosc" name="ilosc" value='test'>
-    <input type="submit" value="send">
+    <input type="text" id="ilosc" name="ilosc" value='{ilosc_value}'>
+    <input type="submit" value="send"></form>
     <table>
     {tabela}</table>
 
@@ -40,7 +51,10 @@ def index():
         return body
     
     else:
-        produkt.append((request.form["produkt"], request.form["ilosc"]))
+        if edit_id is not None:
+            produkt[int(edit_id)] = (request.form['produkt'], request.form['ilosc'])
+        else:
+            produkt.append((request.form["produkt"], request.form["ilosc"]))
         
 
         return redirect(url_for('index'))
