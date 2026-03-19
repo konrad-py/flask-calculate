@@ -5,10 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista zakupów</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
 </head>
 
 <body>
-    Hello World 2
+    <form id="zakupy" action="{{ form_action }}" method="POST">
+        <h1>Lista zakupów</h1><br>
+        <label for="produkt">Produkt</label>
+        <input type="text" id="produkt" name="produkt" value="{{ produkt_value }}"><br>
+        <label for="ilosc">Ilość</label>
+        <input type="text" id="ilosc" name="ilosc" value="{{ ilosc_value }}">
+        <input type='submit' value='send'>
+    </form>
+    <table>
+        <tr>
+            <th>Produkt</th>
+            <th>Ilość</th>
+            <th>Usuń</th>
+            <th>Edytuj</th>
+        </tr>
+        {% for produkty, ilosc in produkt %}
+        <tr>
+            <td>{{ produkty }}</td>
+            <td>{{ ilosc }}</td>
+            <td><a href="{{ url_for('usun', id=loop.index0) }}">Usuń</a></td>
+            <td><a href="{{ url_for('index', edit=loop.index0) }}"">Edytuj</a></td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 
 </html>

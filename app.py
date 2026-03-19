@@ -21,34 +21,8 @@ def index():
             ilosc_value = ''
             form_action = url_for('index')
 
-        tabela = f'''<tr>
-    <th>Produkt</th>
-    <th>Ilość</th>
-    <th>Usuń</th>
-    <th>Edytuj</th>
-  </tr>'''
-        for index, (produkty, ilosc) in enumerate(produkt):
-            tabela += f'''<tr>
-            <td>{produkty}</td>
-            <td>{ilosc}</td>
-            <td><a href="{url_for('usun', id=index)}">Usuń</a></td>
-            <td><a href="{url_for('index', edit=index)}">Edytuj</a></td>
-        </tr>'''
         
-        body = f'''
-        <link rel="stylesheet" href="{url_for("static", filename="style.css")}">
-<form id="zakupy" action="{form_action}" method="POST">
-    <h1>Lista zakupów</h1><br>
-    <label for="produkt">Produkt</label>
-    <input type="text" id="produkt" name="produkt" value='{produkt_value}'><br>
-    <label for="ilosc">Ilość</label>
-    <input type="text" id="ilosc" name="ilosc" value='{ilosc_value}'>
-    <input type="submit" value="send"></form>
-    <table>
-    {tabela}</table>
-
-'''
-        return body
+        return render_template("index.html", produkt=produkt, produkt_value=produkt_value, ilosc_value=ilosc_value, form_action=form_action)
     
     else:
         if edit_id is not None:
