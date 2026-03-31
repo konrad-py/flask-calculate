@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 
 from flask import Flask, render_template, request, redirect, url_for
+import json
 
 app = Flask(__name__)
 produkt = []
+try:
+    with open('./data.json', 'r') as f:
+        produkt = json.load(f)
+except:
+    produkt = []
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -30,12 +36,16 @@ def index():
         else:
             produkt.append((request.form["produkt"], request.form["ilosc"]))
         
+        with open('./data.json', 'w') as f:
+            json.dump(produkt, f)
 
         return redirect(url_for('index'))
 
 @app.route("/usun/<int:id>")
 def usun(id):
     produkt.pop(id)
+    with open('./data.json', 'w') as f:
+            json.dump(produkt, f)
     return redirect(url_for('index'))
 
     
