@@ -1,7 +1,26 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, request, redirect, url_for
-import json
+from flask import Flask, render_template, request, redirect, url_for, g
+import json, sqlite3
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
+DB_PATH = DATA_DIR / "zakupy.db"
+
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+def get_db():
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = sqlite3.connect(DB_PATH)
+    return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
 
 app = Flask(__name__)
 produkt = []
