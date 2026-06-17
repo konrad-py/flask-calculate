@@ -33,13 +33,6 @@ def init_db():
 with app.app_context():
     init_db()
 
-#produkt = []
-#try:
-#    with open('./data.json', 'r') as f:
-#       produkt = json.load(f)
-#except:
-#    produkt = []
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -53,8 +46,10 @@ def index():
         produkty = cursor.fetchall()
         
         if edit_id is not None:
-            produkt_value = produkt[int(edit_id)][0]
-            ilosc_value = produkt[int(edit_id)][1]
+            cursor = db.execute('SELECT id, produkt, ilosc FROM produkty WHERE id = ?', (edit_id,))
+            prod = cursor.fetchone()
+            produkt_value = prod['produkt']
+            ilosc_value = prod['ilosc']
             form_action = url_for('index', edit=edit_id)
         else:
             produkt_value = ''
@@ -67,7 +62,8 @@ def index():
     else:
         db = get_db()
         if edit_id is not None:
-            produkt[int(edit_id)] = (request.form['produkt'], request.form['ilosc'])
+            db.execute('UPDATE produkty SET produkt = ?, ilosc = ? WHERE id = ?', (request.form['produkt'], request.form['ilosc'], edit_id))
+            db.commit()
         else:
             db.execute('INSERT INTO produkty (produkt, ilosc) VALUES (?, ?)', (request.form['produkt'], request.form['ilosc']))
             db.commit()
