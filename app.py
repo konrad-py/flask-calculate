@@ -10,6 +10,8 @@ DB_PATH = DATA_DIR / "zakupy.db"
 
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+app = Flask(__name__)
+
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -22,13 +24,20 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
-app = Flask(__name__)
-produkt = []
-try:
-    with open('./data.json', 'r') as f:
-        produkt = json.load(f)
-except:
-    produkt = []
+def init_db():
+    db = get_db()
+    db.execute('CREATE TABLE IF NOT EXISTS produkty (id INTEGER PRIMARY KEY AUTOINCREMENT, produkt TEXT NOT NULL,ilosc TEXT NOT NULL)')
+    db.commit()
+
+with app.app_context():
+    init_db()
+
+#produkt = []
+#try:
+#    with open('./data.json', 'r') as f:
+#       produkt = json.load(f)
+#except:
+#    produkt = []
 
 
 @app.route('/', methods=['GET', 'POST'])
