@@ -33,12 +33,12 @@
             <th class="text-center">Usuń</th>
             <th class="text-center">Edytuj</th>
         </tr>
-        {% for produkty, ilosc in produkt %}
+        {% for item in produkty %}
         <tr>
-            <td class="text-center">{{ produkty }}</td>
-            <td class="text-center">{{ ilosc }}</td>
-            <td class="text-center"><a href="{{ url_for('usun', id=loop.index0) }}" class="btn btn-sm btn-danger">Usuń</a></td>
-            <td class="text-center"><a href="{{ url_for('index', edit=loop.index0) }}" class="btn btn-sm btn-warning">Edytuj</a></td>
+            <td class="text-center">{{ item['produkt'] }}</td>
+            <td class="text-center">{{ item['ilosc'] }}</td>
+            <td class="text-center"><a href="{{ url_for('usun', id=item['id']) }}" class="btn btn-sm btn-danger">Usuń</a></td>
+            <td class="text-center"><a href="{{ url_for('index', id=item['id']) }}" class="btn btn-sm btn-warning">Edytuj</a></td>
         </tr>
         {% endfor %}
     </table>
