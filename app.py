@@ -78,9 +78,9 @@ def index():
 
 @app.route("/usun/<int:id>")
 def usun(id):
-    produkt.pop(id)
-    with open('./data.json', 'w') as f:
-            json.dump(produkt, f)
+    db = get_db()
+    db.execute('DELETE FROM produkty WHERE id = ?', (id,))
+    db.commit()
     return redirect(url_for('index'))
 
     
