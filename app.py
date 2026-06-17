@@ -48,9 +48,12 @@ def index():
         if edit_id is not None:
             cursor = db.execute('SELECT id, produkt, ilosc FROM produkty WHERE id = ?', (edit_id,))
             prod = cursor.fetchone()
-            produkt_value = prod['produkt']
-            ilosc_value = prod['ilosc']
-            form_action = url_for('index', edit=edit_id)
+            if prod:
+                produkt_value = prod['produkt']
+                ilosc_value = prod['ilosc']
+                form_action = url_for('index', edit=edit_id)
+            else:
+                return redirect(url_for('index'))
         else:
             produkt_value = ''
             ilosc_value = ''
