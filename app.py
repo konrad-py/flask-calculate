@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, request, redirect, url_for, g
-import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, g, session
+import sqlite3, os 
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
