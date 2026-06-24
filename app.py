@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, request, redirect, url_for, g, session
+from flask import Flask, render_template, request, redirect, url_for, g, session, flash
 import sqlite3, os 
 from pathlib import Path
+from dotenv import load_dotenv
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -10,7 +12,10 @@ DB_PATH = DATA_DIR / "zakupy.db"
 
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+load_dotenv()
+
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY")
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -37,6 +42,10 @@ with app.app_context():
 @app.route('/', methods=['GET', 'POST'])
 def index():
 
+    user = session.get('user')
+    if user is None:
+        return redirect(url_for("login"))
+    
     edit_id = request.args.get('edit')
     if request.method == "GET":
 
@@ -74,6 +83,26 @@ def index():
         
 
         return redirect(url_for('index'))
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = request.form['user']
+        password = request.form['password']
+        if ((user == os.getenv('SHOP_USER_1') and password == os.getenv('SHOP_PASS_1')) 
+            or (user == os.getenv('SHOP_USER_2') and password == os.getenv('SHOP_PASS_2'))
+        ):
+            session['user'] = user
+            return redirect(url_for('index'))
+        else:
+            return render_template("login.html", error="wrong username or password")
+    else:
+        return render_template('login.html')
+
+@app.route("/logout")
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('login'))
 
 @app.route("/usun/<int:id>")
 def usun(id):
