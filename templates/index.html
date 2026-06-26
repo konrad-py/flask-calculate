@@ -11,7 +11,9 @@
 
 <body>
     <div class="container mt-4">
-        <a href="{{ url_for('logout') }}" class="btn btn-sm btn-danger">Wyloguj</a>
+        <div class="d-flex justify-content-between mb-3">
+        <a href="{{ url_for('logout') }}" class="btn btn-sm btn-danger">Wyloguj</a><a href="{{ url_for('index') }}" class="btn btn-sm btn-secondary">Odśwież</a>
+        </div>
         <div class="card p-4 mb-4">
     <form id="zakupy" action="{{ form_action }}" method="POST">
         <h1 class="mb-4">Lista zakupów</h1>
