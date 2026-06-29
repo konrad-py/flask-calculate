@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 from flask import Flask, render_template, request, redirect, url_for, g, session, flash
-import sqlite3, os 
+import sqlite3, os
+from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -62,33 +63,36 @@ def index():
 
         db = get_db()
 
-        cursor = db.execute('SELECT id, produkt, ilosc FROM produkty')
+        cursor = db.execute('SELECT id, produkt, ilosc, data_dodania, sklep FROM produkty')
         produkty = cursor.fetchall()
         
         if edit_id is not None:
-            cursor = db.execute('SELECT id, produkt, ilosc FROM produkty WHERE id = ?', (edit_id,))
+            cursor = db.execute('SELECT id, produkt, ilosc, sklep FROM produkty WHERE id = ?', (edit_id,))
             prod = cursor.fetchone()
             if prod:
                 produkt_value = prod['produkt']
                 ilosc_value = prod['ilosc']
+                sklep_value = prod['sklep']
                 form_action = url_for('index', edit=edit_id)
             else:
                 return redirect(url_for('index'))
         else:
             produkt_value = ''
             ilosc_value = ''
+            sklep_value = ''
             form_action = url_for('index')
 
         
-        return render_template("index.html", produkty=produkty, produkt_value=produkt_value, ilosc_value=ilosc_value, form_action=form_action)
+        return render_template("index.html", produkty=produkty, produkt_value=produkt_value, ilosc_value=ilosc_value, form_action=form_action, sklep_value=sklep_value)
     
     else:
         db = get_db()
         if edit_id is not None:
-            db.execute('UPDATE produkty SET produkt = ?, ilosc = ? WHERE id = ?', (request.form['produkt'], request.form['ilosc'], edit_id))
+            db.execute('UPDATE produkty SET produkt = ?, ilosc = ?, sklep = ? WHERE id = ?', (request.form['produkt'], request.form['ilosc'], request.form['sklep'], edit_id))
             db.commit()
         else:
-            db.execute('INSERT INTO produkty (produkt, ilosc) VALUES (?, ?)', (request.form['produkt'], request.form['ilosc']))
+            data_dodania = datetime.today().strftime('%Y-%m-%d')
+            db.execute('INSERT INTO produkty (produkt, ilosc, data_dodania, sklep) VALUES (?, ?, ?, ?)', (request.form['produkt'], request.form['ilosc'], data_dodania, request.form['sklep']))
             db.commit()
         
         
