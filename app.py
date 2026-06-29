@@ -121,6 +121,10 @@ def logout():
 
 @app.route("/usun/<int:id>")
 def usun(id):
+    user = session.get('user')
+    if user is None:
+        return redirect(url_for("login"))
+    
     db = get_db()
     db.execute('DELETE FROM produkty WHERE id = ?', (id,))
     db.commit()
@@ -129,11 +133,17 @@ def usun(id):
 
 @app.route("/budowa")
 def budowa():
-
+    user = session.get('user')
+    if user is None:
+        return redirect(url_for("login"))
+    
     return render_template('budowa.html')
 
 @app.route('/about')
 def about():
+    user = session.get('user')
+    if user is None:
+        return redirect(url_for("login"))
     return 'we are programmers'
 
 if __name__ == '__main__':
