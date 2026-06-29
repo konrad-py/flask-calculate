@@ -33,7 +33,18 @@ def close_connection(exception):
 def init_db():
     db = get_db()
     db.execute('CREATE TABLE IF NOT EXISTS produkty (id INTEGER PRIMARY KEY AUTOINCREMENT, produkt TEXT NOT NULL,ilosc TEXT NOT NULL)')
+    db.execute('CREATE TABLE IF NOT EXISTS budowa (id INTEGER PRIMARY KEY AUTOINCREMENT, produkt TEXT NOT NULL,ilosc TEXT NOT NULL, cena TEXT NOT NULL, data TEXT NOT NULL)')
+    cursor = db.execute("PRAGMA table_info(produkty)")
+    rows = cursor.fetchall()
+    columns = [row["name"] for row in rows]
+    if "data_dodania" not in columns:
+        db.execute("ALTER TABLE produkty ADD COLUMN data_dodania TEXT")
+    if 'sklep' not in columns:
+        db.execute("ALTER TABLE produkty ADD COLUMN sklep TEXT")
     db.commit()
+
+
+    
 
 with app.app_context():
     init_db()
@@ -111,7 +122,11 @@ def usun(id):
     db.commit()
     return redirect(url_for('index'))
 
-    
+
+@app.route("/budowa")
+def budowa():
+
+    return render_template('budowa.html')
 
 @app.route('/about')
 def about():
