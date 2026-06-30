@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, request, redirect, url_for, g, session, flash
+from flask import Flask, render_template, request, redirect, url_for, g, session
 import sqlite3, os
 from datetime import datetime
 from pathlib import Path
@@ -33,8 +33,8 @@ def close_connection(exception):
 
 def init_db():
     db = get_db()
-    db.execute('CREATE TABLE IF NOT EXISTS produkty (id INTEGER PRIMARY KEY AUTOINCREMENT, produkt TEXT NOT NULL,ilosc TEXT NOT NULL)')
-    db.execute('CREATE TABLE IF NOT EXISTS budowa (id INTEGER PRIMARY KEY AUTOINCREMENT, produkt TEXT NOT NULL,ilosc TEXT NOT NULL, cena TEXT NOT NULL, data TEXT NOT NULL)')
+    db.execute('CREATE TABLE IF NOT EXISTS produkty (id INTEGER PRIMARY KEY AUTOINCREMENT, produkt TEXT NOT NULL, ilosc TEXT NOT NULL)')
+    db.execute('CREATE TABLE IF NOT EXISTS budowa (id INTEGER PRIMARY KEY AUTOINCREMENT, produkt TEXT NOT NULL, koszt TEXT NOT NULL, ilosc TEXT NOT NULL, sklep TEXT, data TEXT NOT NULL)')
     cursor = db.execute("PRAGMA table_info(produkty)")
     rows = cursor.fetchall()
     columns = [row["name"] for row in rows]
@@ -95,9 +95,21 @@ def index():
             db.execute('INSERT INTO produkty (produkt, ilosc, data_dodania, sklep) VALUES (?, ?, ?, ?)', (request.form['produkt'], request.form['ilosc'], data_dodania, request.form['sklep']))
             db.commit()
         
-        
-
         return redirect(url_for('index'))
+
+@app.route("/usun/<int:id>")
+def usun(id):
+    user = session.get('user')
+    if user is None:
+        return redirect(url_for("login"))
+    
+    db = get_db()
+    db.execute('DELETE FROM produkty WHERE id = ?', (id,))
+    db.commit()
+    return redirect(url_for('index'))
+
+######<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<LOGIN>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -119,25 +131,88 @@ def logout():
     session.pop('user', None)
     return redirect(url_for('login'))
 
-@app.route("/usun/<int:id>")
-def usun(id):
+
+######<<<<<<<<<<<<<<BUDOWA>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+@app.route("/budowa_usun/<int:id>")
+def budowa_usun(id):
     user = session.get('user')
     if user is None:
         return redirect(url_for("login"))
     
     db = get_db()
-    db.execute('DELETE FROM produkty WHERE id = ?', (id,))
+    db.execute('DELETE FROM budowa WHERE id = ?', (id,))
     db.commit()
-    return redirect(url_for('index'))
+    return redirect(url_for('budowa'))
 
 
-@app.route("/budowa")
+@app.route("/budowa", methods=['GET', 'POST'])
 def budowa():
     user = session.get('user')
     if user is None:
         return redirect(url_for("login"))
     
-    return render_template('budowa.html')
+    edit_id = request.args.get('edit')
+    if request.method == "GET":
+
+        db = get_db()
+
+        cursor = db.execute('SELECT id, produkt, koszt, ilosc, data, sklep FROM budowa')
+        budowa_items = cursor.fetchall()
+        
+        suma = 0
+        for item in budowa_items:
+            cena = float(item['koszt'])
+            suma += cena
+
+        error = None
+
+        if edit_id is not None:
+            cursor = db.execute('SELECT id, produkt, koszt, ilosc, sklep FROM budowa WHERE id = ?', (edit_id,))
+            prod = cursor.fetchone()
+            if prod:
+                produkt_value = prod['produkt']
+                koszt_value = prod['koszt']
+                ilosc_value = prod['ilosc']
+                sklep_value = prod['sklep']
+                form_action = url_for('budowa', edit=edit_id)
+            else:
+                return redirect(url_for('budowa'))
+        else:
+            produkt_value = ''
+            koszt_value = ''
+            ilosc_value = ''
+            sklep_value = ''
+            form_action = url_for('budowa')
+
+        
+        return render_template("budowa.html", budowa_items=budowa_items, produkt_value=produkt_value, koszt_value=koszt_value, ilosc_value=ilosc_value, form_action=form_action, sklep_value=sklep_value, error=error, suma=suma)
+    
+    else:
+        db = get_db()
+        try:
+            koszt = float(request.form['koszt'].replace(',', '.'))
+
+            if edit_id is not None:
+                db.execute('UPDATE budowa SET produkt = ?, koszt = ?, ilosc = ?, sklep = ? WHERE id = ?', (request.form['produkt'], koszt, request.form['ilosc'], request.form['sklep'], edit_id))
+                db.commit()
+            else:
+                data = datetime.today().strftime('%Y-%m-%d')
+                db.execute('INSERT INTO budowa (produkt, koszt, ilosc, data, sklep) VALUES (?, ?, ?, ?, ?)', (request.form['produkt'], koszt, request.form['ilosc'], data, request.form['sklep']))
+                db.commit()
+            
+            return redirect(url_for('budowa'))
+        
+        except:
+            error = "W polu koszt można wpisać tylko liczbę"
+            cursor = db.execute('SELECT id, produkt, koszt, ilosc, data, sklep FROM budowa')
+            budowa_items = cursor.fetchall()
+            suma = 0
+            for item in budowa_items:
+                cena = float(item['koszt'])
+                suma += cena
+            return render_template('budowa.html', produkt_value=request.form['produkt'], koszt_value=request.form['koszt'], ilosc_value=request.form['ilosc'], sklep_value=request.form['sklep'], error=error, budowa_items=budowa_items, suma=suma)
+
 
 @app.route('/about')
 def about():

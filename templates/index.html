@@ -37,17 +37,19 @@
     </div>
     <table class="table table-striped table-hover mt-4">
         <tr>
+            <th class="text-center align-middle">X</th>
             <th class="text-center align-middle">Produkt</th>
             <th class="text-center align-middle">Ilość</th>
             <th class="text-center align-middle">Sklep</th>
-            <th class="text-center align-middle">Akcje</th>
+            <th class="text-center align-middle">Ed</th>
         </tr>
         {% for item in produkty %}
         <tr>
+            <td class="text-center align-middle"><a href="{{ url_for('usun', id=item['id']) }}" class="btn btn-sm btn-danger me-1">X</a></td>
             <td class="text-center align-middle">{{ item['produkt'] }}</td>
             <td class="text-center align-middle">{{ item['ilosc'] }}</td>
             <td class="text-center align-middle">{{ item['sklep'] }}</td>
-            <td class="text-center align-middle"><a href="{{ url_for('usun', id=item['id']) }}" class="btn btn-sm btn-danger me-1">Usuń</a><a href="{{ url_for('index', edit=item['id']) }}" class="btn btn-sm btn-warning">Edytuj</a></td>
+            <td class="text-center align-middle"><a href="{{ url_for('index', edit=item['id']) }}" class="btn btn-sm btn-warning">Ed</a></td>
             
         </tr>
         {% endfor %}
