@@ -35,17 +35,14 @@ def init_db():
     db = get_db()
     db.execute('CREATE TABLE IF NOT EXISTS produkty (id INTEGER PRIMARY KEY AUTOINCREMENT, produkt TEXT NOT NULL, ilosc TEXT NOT NULL)')
     db.execute('CREATE TABLE IF NOT EXISTS budowa (id INTEGER PRIMARY KEY AUTOINCREMENT, produkt TEXT NOT NULL, koszt TEXT NOT NULL, ilosc TEXT NOT NULL, sklep TEXT, data TEXT NOT NULL)')
-    cursor = db.execute("PRAGMA table_info(produkty)")
-    rows = cursor.fetchall()
-    columns = [row["name"] for row in rows]
-    if "data_dodania" not in columns:
-        db.execute("ALTER TABLE produkty ADD COLUMN data_dodania TEXT")
-    if 'sklep' not in columns:
-        db.execute("ALTER TABLE produkty ADD COLUMN sklep TEXT")
+    #cursor = db.execute("PRAGMA table_info(produkty)")
+    #rows = cursor.fetchall()
+    #columns = [row["name"] for row in rows]
+    #if "data_dodania" not in columns:
+    #    db.execute("ALTER TABLE produkty ADD COLUMN data_dodania TEXT")
+    #if 'sklep' not in columns:
+    #    db.execute("ALTER TABLE produkty ADD COLUMN sklep TEXT")
     db.commit()
-
-
-    
 
 with app.app_context():
     init_db()
