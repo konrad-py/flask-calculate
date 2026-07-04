@@ -44,13 +44,19 @@
             <th class="text-center align-middle">Ed</th>
         </tr>
         {% for item in produkty %}
+        {% if item['sklep'] == 'lidl' or item['sklep'] == 'Lidl' %}
+            {% set row_class = 'table-primary' %}
+        {% elif item['sklep'] == 'biedronka' or item['sklep'] == 'Biedronka' %}
+            {% set row_class = 'table-danger' %}
+        {% else %}
+            {% set row_class = '' %}
+        {% endif %}
         <tr>
-            <td class="text-center align-middle"><a href="{{ url_for('usun', id=item['id']) }}" class="btn btn-sm btn-danger me-1">X</a></td>
-            <td class="text-center align-middle">{{ item['produkt'] }}</td>
-            <td class="text-center align-middle">{{ item['ilosc'] }}</td>
-            <td class="text-center align-middle">{{ item['sklep'] }}</td>
-            <td class="text-center align-middle"><a href="{{ url_for('index', edit=item['id']) }}" class="btn btn-sm btn-warning">Ed</a></td>
-            
+            <td class="text-center align-middle {{ row_class }}"><a href="{{ url_for('usun', id=item['id']) }}" class="btn btn-sm btn-danger me-1">X</a></td>
+            <td class="text-center align-middle {{ row_class }}">{{ item['produkt'] }}</td>
+            <td class="text-center align-middle {{ row_class }}">{{ item['ilosc'] }}</td>
+            <td class="text-center align-middle {{ row_class }}">{{ item['sklep'] }}</td>
+            <td class="text-center align-middle {{ row_class }}"><a href="{{ url_for('index', edit=item['id']) }}" class="btn btn-sm btn-warning">Ed</a></td>
         </tr>
         {% endfor %}
     </table>

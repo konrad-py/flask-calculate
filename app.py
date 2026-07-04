@@ -41,6 +41,8 @@ def init_db():
 with app.app_context():
     init_db()
 
+LIDL = "table-primary"
+BIEDRONKA = "table-danger"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -49,6 +51,9 @@ def index():
     if user is None:
         return redirect(url_for("login"))
     
+    LIDL = "table-primary"
+    BIEDRONKA = "table-danger"
+
     edit_id = request.args.get('edit')
     if request.method == "GET":
 
@@ -74,7 +79,7 @@ def index():
             form_action = url_for('index')
 
         
-        return render_template("index.html", produkty=produkty, produkt_value=produkt_value, ilosc_value=ilosc_value, form_action=form_action, sklep_value=sklep_value)
+        return render_template("index.html", produkty=produkty, produkt_value=produkt_value, ilosc_value=ilosc_value, form_action=form_action, sklep_value=sklep_value, LIDL=LIDL, BIEDRONKA=BIEDRONKA)
     
     else:
         db = get_db()
