@@ -46,16 +46,25 @@
         {% for item in produkty %}
         {% if item['sklep'] == 'lidl' or item['sklep'] == 'Lidl' %}
             {% set row_class = 'table-primary' %}
+            {% set logo_file = 'Lidl_logo.png' %}
         {% elif item['sklep'] == 'biedronka' or item['sklep'] == 'Biedronka' %}
             {% set row_class = 'table-danger' %}
+            {% set logo_file = 'unnamed.webp' %}
         {% else %}
             {% set row_class = '' %}
+            {% set logo_file = none%}
         {% endif %}
         <tr>
             <td class="text-center align-middle {{ row_class }}"><a href="{{ url_for('usun', id=item['id']) }}" class="btn btn-sm btn-danger me-1">X</a></td>
             <td class="text-center align-middle {{ row_class }}">{{ item['produkt'] }}</td>
             <td class="text-center align-middle {{ row_class }}">{{ item['ilosc'] }}</td>
-            <td class="text-center align-middle {{ row_class }}">{{ item['sklep'] }}</td>
+            <td class="text-center align-middle {{ row_class }}">
+                {% if logo_file %}
+                <img src="{{ url_for('static', filename=logo_file) }}" alt="{{ item['sklep'] }}" class="shop_logo">
+                {% else %}
+                {{ item['sklep'] }}
+                {% endif %}
+            </td>
             <td class="text-center align-middle {{ row_class }}"><a href="{{ url_for('index', edit=item['id']) }}" class="btn btn-sm btn-warning">Ed</a></td>
         </tr>
         {% endfor %}

@@ -84,11 +84,11 @@ def index():
     else:
         db = get_db()
         if edit_id is not None:
-            db.execute('UPDATE produkty SET produkt = ?, ilosc = ?, sklep = ? WHERE id = ?', (request.form['produkt'], request.form['ilosc'], request.form['sklep'], edit_id))
+            db.execute('UPDATE produkty SET produkt = ?, ilosc = ?, sklep = ? WHERE id = ?', (request.form['produkt'].strip(), request.form['ilosc'].strip(), request.form['sklep'].strip(), edit_id))
             db.commit()
         else:
             data_dodania = datetime.today().strftime('%Y-%m-%d')
-            db.execute('INSERT INTO produkty (produkt, ilosc, data_dodania, sklep) VALUES (?, ?, ?, ?)', (request.form['produkt'], request.form['ilosc'], data_dodania, request.form['sklep']))
+            db.execute('INSERT INTO produkty (produkt, ilosc, data_dodania, sklep) VALUES (?, ?, ?, ?)', (request.form['produkt'].strip(), request.form['ilosc'].strip(), data_dodania, request.form['sklep'].strip()))
             db.commit()
         
         return redirect(url_for('index'))
@@ -190,11 +190,11 @@ def budowa():
             koszt = float(request.form['koszt'].replace(',', '.'))
 
             if edit_id is not None:
-                db.execute('UPDATE budowa SET produkt = ?, koszt = ?, ilosc = ?, sklep = ? WHERE id = ?', (request.form['produkt'], koszt, request.form['ilosc'], request.form['sklep'], edit_id))
+                db.execute('UPDATE budowa SET produkt = ?, koszt = ?, ilosc = ?, sklep = ? WHERE id = ?', (request.form['produkt'].strip(), koszt, request.form['ilosc'].strip(), request.form['sklep'].strip(), edit_id))
                 db.commit()
             else:
                 data = datetime.today().strftime('%Y-%m-%d')
-                db.execute('INSERT INTO budowa (produkt, koszt, ilosc, data, sklep) VALUES (?, ?, ?, ?, ?)', (request.form['produkt'], koszt, request.form['ilosc'], data, request.form['sklep']))
+                db.execute('INSERT INTO budowa (produkt, koszt, ilosc, data, sklep) VALUES (?, ?, ?, ?, ?)', (request.form['produkt'].strip(), koszt, request.form['ilosc'].strip(), data, request.form['sklep'].strip()))
                 db.commit()
             
             return redirect(url_for('budowa'))
