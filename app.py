@@ -79,7 +79,7 @@ def index():
             form_action = url_for('index')
 
         
-        return render_template("index.html", produkty=produkty, produkt_value=produkt_value, ilosc_value=ilosc_value, form_action=form_action, sklep_value=sklep_value, LIDL=LIDL, BIEDRONKA=BIEDRONKA)
+        return render_template("index.html", produkty=produkty, produkt_value=produkt_value, ilosc_value=ilosc_value, form_action=form_action, sklep_value=sklep_value, LIDL=LIDL, BIEDRONKA=BIEDRONKA, edit_id=edit_id)
     
     else:
         db = get_db()

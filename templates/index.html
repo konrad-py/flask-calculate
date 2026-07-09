@@ -16,7 +16,10 @@
         <a href="{{ url_for('budowa') }}" class="btn btn-sm btn-secondary">Budowa</a>
         <a href="{{ url_for('index') }}" class="btn btn-sm btn-secondary">Odśwież</a>
         </div> 
-        <div class="card p-4 mb-4">
+        <button class="btn btn-purple" type="button" data-bs-toggle="collapse" data-bs-target="#zakupy">
+        Dodaj produkt
+        </button>
+        <div id="zakupy" class="card p-4 mb-4 collapse {% if edit_id %}show{% endif %}">
     <form id="zakupy" action="{{ form_action }}" method="POST">
         <h1 class="mb-4">Lista zakupów</h1>
         <div class="mb-3">
@@ -55,17 +58,17 @@
             {% set logo_file = none%}
         {% endif %}
         <tr>
-            <td class="text-center align-middle {{ row_class }}"><a href="{{ url_for('usun', id=item['id']) }}" class="btn btn-sm btn-danger me-1">X</a></td>
-            <td class="text-center align-middle {{ row_class }}">{{ item['produkt'] }}</td>
-            <td class="text-center align-middle {{ row_class }}">{{ item['ilosc'] }}</td>
-            <td class="text-center align-middle {{ row_class }}">
+            <td class="text-center align-middle"><a href="{{ url_for('usun', id=item['id']) }}"><img src="{{ url_for('static', filename='deletexxl.png') }}" alt="usun" class="shop_logo"></a></td>
+            <td class="text-center align-middle">{{ item['produkt'] }}</td>
+            <td class="text-center align-middle">{{ item['ilosc'] }}</td>
+            <td class="text-center align-middle">
                 {% if logo_file %}
                 <img src="{{ url_for('static', filename=logo_file) }}" alt="{{ item['sklep'] }}" class="shop_logo">
                 {% else %}
                 {{ item['sklep'] }}
                 {% endif %}
             </td>
-            <td class="text-center align-middle {{ row_class }}"><a href="{{ url_for('index', edit=item['id']) }}" class="btn btn-sm btn-warning">Ed</a></td>
+            <td class="text-center align-middle"><a href="{{ url_for('index', edit=item['id']) }}"><img src="{{ url_for('static', filename='crayon_violet.png') }}" alt='edytuj' class='shop_logo'></a></td>
         </tr>
         {% endfor %}
     </table>
