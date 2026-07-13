@@ -20,7 +20,7 @@
         Dodaj produkt
         </button>
         <div id="zakupy" class="card p-4 mb-4 collapse {% if edit_id %}show{% endif %}">
-    <form id="zakupy" action="{{ form_action }}" method="POST">
+    <form id="zakupy-form" action="{{ form_action }}" method="POST">
         <h1 class="mb-4">Lista zakupów</h1>
         <div class="mb-3">
             <label for="produkt" class="form-label">Produkt</label>
@@ -62,6 +62,8 @@
             <td class="text-center align-middle">
                 {% if logo_file %}
                 <img src="{{ url_for('static', filename=logo_file) }}" alt="{{ item['sklep'] }}" class="shop_logo">
+                {% elif item['sklep'] and item['sklep'].startswith('https') %}
+                <a href="{{ item['sklep'] }}" class="text-center align-middle">LINK</a>
                 {% else %}
                 {{ item['sklep'] }}
                 {% endif %}
